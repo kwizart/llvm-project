@@ -4826,7 +4826,8 @@ void Sema::InstantiateFunctionDefinition(SourceLocation PointOfInstantiation,
                                      /*Complain*/DefinitionRequired)) {
     if (DefinitionRequired)
       Function->setInvalidDecl();
-    else if (TSK == TSK_ExplicitInstantiationDefinition) {
+    else if (TSK == TSK_ExplicitInstantiationDefinition ||
+             (Function->isConstexpr() && !Recursive)) {
       // Try again at the end of the translation unit (at which point a
       // definition will be required).
       assert(!Recursive);
@@ -4841,7 +4842,7 @@ void Sema::InstantiateFunctionDefinition(SourceLocation PointOfInstantiation,
         Diag(PatternDecl->getLocation(), diag::note_forward_template_decl);
         if (getLangOpts().CPlusPlus11)
           Diag(PointOfInstantiation, diag::note_inst_declaration_hint)
-            << Function;
+              << Function;
       }
     }
 
